@@ -1,0 +1,10 @@
+Django==3.2.9
+firebase-admin>=6.0.0
+<<<<<<< HEAD
+# PyMySQL>=1.0.0  # 已完全改用 Firebase，不需要 MySQL 連接器
+# mysqlclient>=2.1.0  # 已完全改用 Firebase，不需要 MySQL 連接器
+=======
+PyMySQL>=1.0.0
+# mysqlclient>=2.1.0  # 改用 PyMySQL，不需要編譯，功能相同
+>>>>>>> f679c86087e0e172543b0df1d5f4252e27ad1b6c
+

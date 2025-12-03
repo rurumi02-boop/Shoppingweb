@@ -1,0 +1,506 @@
+{% extends "base.html" %}
+{% block title %}<title>{{ product.product_name }} - 商品詳情</title>{% endblock %}
+
+{% block style %}
+<style>
+  .product-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .product-image-section {
+    position: relative;
+  }
+  
+  .product-image-main {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+  }
+  
+  .product-info-section {
+    padding-left: 30px;
+  }
+  
+  .product-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+  
+  .product-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .star-rating {
+    color: #ff6b35;
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  .rating-text {
+    color: #666;
+    font-size: 14px;
+    margin-left: 5px;
+  }
+  
+  .product-price {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ee4d2d;
+    margin: 20px 0;
+  }
+  
+  .product-price-range {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ee4d2d;
+    margin: 20px 0;
+  }
+  
+  .variant-section {
+    margin: 25px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+  
+  .variant-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .variant-btn {
+    padding: 8px 16px;
+    border: 2px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .variant-btn:hover {
+    border-color: #ee4d2d;
+    color: #ee4d2d;
+  }
+  
+  .variant-btn.selected {
+    border-color: #ee4d2d;
+    background: #ee4d2d;
+    color: #fff;
+  }
+  
+  .quantity-section {
+    margin: 25px 0;
+  }
+  
+  .quantity-select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 120px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
+  }
+  
+  .btn-add-cart {
+    flex: 1;
+    padding: 15px;
+    background: #fff;
+    border: 2px solid #ee4d2d;
+    color: #ee4d2d;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-add-cart:hover {
+    background: #fff5f3;
+  }
+  
+  .btn-buy-now {
+    flex: 1;
+    padding: 15px;
+    background: #ee4d2d;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-buy-now:hover {
+    background: #d73211;
+  }
+  
+  .shipping-info {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f0f8ff;
+    border-left: 4px solid #4a90e2;
+    border-radius: 4px;
+  }
+  
+  .service-guarantee {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f0fff0;
+    border-left: 4px solid #52c41a;
+    border-radius: 4px;
+  }
+  
+  .customize-notice {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff7e6;
+    border-left: 4px solid #faad14;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #d46b08;
+  }
+  
+  .reviews-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid #e0e0e0;
+  }
+  
+  .review-item {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+  
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .review-user {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .review-date {
+    color: #999;
+    font-size: 14px;
+  }
+  
+  .review-rating {
+    color: #ff6b35;
+    margin-bottom: 10px;
+  }
+  
+  .review-comment {
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  .breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .breadcrumb a {
+    color: #4a90e2;
+    text-decoration: none;
+  }
+  
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-detail-container">
+  <!-- 麵包屑導航 -->
+  <div class="breadcrumb">
+    <a href="{% url 'home' %}">首頁</a> > 
+    <a href="{% url 'product_list' %}">商品列表</a> > 
+    <span>{{ product.product_name }}</span>
+  </div>
+
+  <div class="row">
+    <!-- 左側：商品圖片 -->
+    <div class="col-md-6">
+      <div class="product-image-section">
+        {% if product.image_url %}
+          <img src="{{ product.image_url }}" 
+               alt="{{ product.product_name }}" 
+               class="product-image-main">
+        {% else %}
+          <div class="bg-light d-flex align-items-center justify-content-center rounded"
+               style="width: 100%; height: 400px; color: #aaa;">
+            <span>無圖片</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 右側：商品資訊 -->
+    <div class="col-md-6 product-info-section">
+      <h1 class="product-title">{{ product.product_name }}</h1>
+      
+      <!-- 評等和評價 -->
+      <div class="product-rating">
+        {% if average_rating > 0 %}
+          <div class="star-rating">
+            {% for i in "12345" %}
+              {% if forloop.counter <= average_rating|floatformat:0|add:"0" %}
+                ★
+              {% else %}
+                ☆
+              {% endif %}
+            {% endfor %}
+          </div>
+          <span class="rating-text">
+            {{ average_rating }} ({{ review_count }} 評價)
+          </span>
+        {% else %}
+          <span class="rating-text">尚無評價</span>
+        {% endif %}
+      </div>
+
+      <!-- 價格 -->
+      {% if product.min_price and product.max_price and product.min_price != product.max_price %}
+        <div class="product-price-range">
+          ${{ product.min_price }} - ${{ product.max_price }}
+        </div>
+      {% else %}
+        <div class="product-price">
+          ${{ product.price|floatformat:0 }}
+        </div>
+      {% endif %}
+
+      <!-- 商品介紹 -->
+      <div class="product-description" style="margin: 20px 0; line-height: 1.8; color: #666;">
+        {{ product.description|linebreaks }}
+      </div>
+
+      <hr>
+
+      <!-- 商品變體選擇（款式/顏色） -->
+      {% if product.variant_options %}
+        <div class="variant-section">
+          <div class="variant-label">選擇款式/顏色：</div>
+          <div class="variant-options" id="variant-options">
+            {% for key, value in product.variant_options.items %}
+              <button class="variant-btn" 
+                      data-variant="{{ key }}" 
+                      onclick="selectVariant('{{ key }}')">
+                {{ value }}
+              </button>
+            {% endfor %}
+          </div>
+          <input type="hidden" id="selected-variant" name="variant" value="">
+        </div>
+      {% endif %}
+
+      <!-- 客製化商品提示 -->
+      {% if product.is_customizable %}
+        <div class="customize-notice">
+          ⚠️ 客製化商品請溝通下標！
+        </div>
+      {% endif %}
+
+      <!-- 購買數量 -->
+      <div class="quantity-section">
+        <label for="quantity" style="font-weight: 600; margin-right: 10px;">數量：</label>
+        <select name="quantity" id="quantity" class="quantity-select">
+          {% for i in "12345678910" %}
+            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- 操作按鈕 -->
+      <div class="action-buttons">
+        <form action="{% url 'add_to_cart' product.product_id %}" method="post" style="flex: 1;">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" id="form-quantity" value="1">
+          <input type="hidden" name="variant" id="form-variant" value="">
+          <button type="submit" class="btn-add-cart w-100">
+            🛒 加入購物車
+          </button>
+        </form>
+        
+        {% if user.is_authenticated %}
+          <form action="{% url 'buy_now' product.product_id %}" method="post" style="flex: 1;">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" id="form-quantity-buy" value="1">
+            <input type="hidden" name="variant" id="form-variant-buy" value="">
+            <button type="submit" class="btn-buy-now w-100">
+              直接購買
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'userlogin' %}?next={{ request.path }}" class="btn-buy-now w-100" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+            直接購買
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- 收藏按鈕 -->
+      <div style="margin-top: 15px;">
+        {% if user.is_authenticated %}
+          <button id="wishlist-btn"
+                  data-url="{% url 'toggle_wishlist' product.product_id %}"
+                  class="btn {% if is_favorited %}btn-danger{% else %}btn-outline-danger{% endif %}">
+            {% if is_favorited %}
+              ❤️ 取消收藏
+            {% else %}
+              ♡ 加入收藏
+            {% endif %}
+          </button>
+        {% else %}
+          <a href="{% url 'userlogin' %}?next={{ request.path }}" class="btn btn-outline-danger">
+            ♡ 加入收藏
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- 運送說明 -->
+      <div class="shipping-info">
+        <strong>運送：</strong>
+        {{ product.shipping_info|default:"預計配達時間 3-7 個工作天，運費: $0起" }}
+      </div>
+
+      <!-- 服務與保障 -->
+      <div class="service-guarantee">
+        <strong>服務與保障：</strong>
+        {{ product.service_guarantee|default:"放心買、安心退" }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 評價區 -->
+  {% if reviews %}
+    <div class="reviews-section">
+      <h3 style="margin-bottom: 20px;">商品評價 ({{ review_count }})</h3>
+      {% for review in reviews %}
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-user">
+              {{ review.user.username|default:"匿名使用者" }}
+            </span>
+            <span class="review-date">
+              {{ review.review_date|date:"Y-m-d" }}
+            </span>
+          </div>
+          <div class="review-rating">
+            {% for i in "12345" %}
+              {% if forloop.counter <= review.rating %}
+                ★
+              {% else %}
+                ☆
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% if review.comment %}
+            <div class="review-comment">
+              {{ review.comment|linebreaks }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+// 選擇商品變體
+function selectVariant(variant) {
+  // 移除所有選中狀態
+  document.querySelectorAll('.variant-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  
+  // 添加選中狀態
+  event.target.classList.add('selected');
+  
+  // 更新隱藏欄位
+  document.getElementById('selected-variant').value = variant;
+  document.getElementById('form-variant').value = variant;
+  document.getElementById('form-variant-buy').value = variant;
+}
+
+// 更新數量
+document.getElementById('quantity').addEventListener('change', function() {
+  const quantity = this.value;
+  document.getElementById('form-quantity').value = quantity;
+  document.getElementById('form-quantity-buy').value = quantity;
+});
+
+// 收藏功能
+document.addEventListener('DOMContentLoaded', function () {
+  const wishlistBtn = document.getElementById('wishlist-btn');
+  
+  if (wishlistBtn) {
+    wishlistBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const url = wishlistBtn.dataset.url;
+      
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Accept': 'application/json'
+        }
+      })
+      .then(res => {
+        if (res.status === 401) {
+          window.location.href = `/userlogin/?next={{ request.path }}`;
+          return;
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (!data) return;
+        
+        if (data.status === 'added') {
+          wishlistBtn.classList.remove('btn-outline-danger');
+          wishlistBtn.classList.add('btn-danger');
+          wishlistBtn.innerHTML = '❤️ 取消收藏';
+        } else if (data.status === 'removed') {
+          wishlistBtn.classList.remove('btn-danger');
+          wishlistBtn.classList.add('btn-outline-danger');
+          wishlistBtn.innerHTML = '♡ 加入收藏';
+        }
+      })
+      .catch(err => console.error('收藏操作失敗:', err));
+    });
+  }
+});
+</script>
+{% endblock %}

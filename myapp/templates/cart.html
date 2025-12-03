@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>購物車</title>
+{% endblock %}
+{% block styles %}
+    <style>
+    td.word-wrap {
+        word-break: break-word;
+        max-width: 250px;
+    }
+    .btn-group-custom {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+        align-items: center;
+    }
+    @media (max-width: 576px) {
+        .btn-group-custom > * {
+            flex: 1 1 100%;
+            max-width: 100%;
+        }
+    }
+    table.table-hover tbody tr:hover {
+        background-color: #f1f7ff;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4 text-left">🛒 購物車內容</h2>
+
+    {% if cart_items %}
+
+    <!-- 更新購物車表單 -->
+    <form id="update-cart-form" method="post" action="{% url 'update_cart' %}">
+        {% csrf_token %}
+        <input type="hidden" name="go_to_checkout" id="go-to-checkout" value="0" />
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover bg-white align-middle">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th style="width: 30%;">商品名稱</th>
+                        <th style="width: 15%;">單價</th>
+                        <th style="width: 15%;">數量(可編輯)</th>
+                        <th style="width: 15%;">小計</th>
+                        <th style="width: 15%;">取消</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    {% for product_id, item in cart_items.items %}
+                    <tr class="text-center">
+                        <td class="word-wrap text-start">{{ item.product_name|default:"❌ 未知商品" }}</td>
+                        <td>
+                            {% if item.price is not None %}
+                                ${{ item.price|floatformat:0 }}
+                            {% else %}
+                                ❌ 未知價格
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <input
+                                type="number"
+                                name="quantity_{{ product_id }}"
+                                value="{{ item.quantity }}"
+                                min="1"
+                                class="form-control form-control-sm quantity-input text-center"
+                                data-price="{{ item.price }}"
+                                oninput="updateSubtotal(this)"
+                                style="max-width: 90px; margin: 0 auto;"
+                            />
+                        </td>
+
+                        <td class="subtotal-cell fw-semibold">$ {{ item.subtotal|floatformat:0 }}</td>
+                        <td>
+                            <button type="button"
+                                    onclick="removeItem('{{ product_id }}')"
+                                    class="btn btn-outline-danger btn-sm"
+                                    title="移除商品">
+                                    🔴 移除
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        <div class="text-end mt-3 fs-5 fw-bold">
+            總金額：<span id="total-display">${{ total}}</span>
+        </div>
+    </form>
+
+    <!-- 清空購物車表單（獨立） -->
+    <form id="clear-cart-form" method="post" action="{% url 'clear_cart' %}" onsubmit="return confirm('⚠️ 確定要清空整個購物車嗎？')" style="margin:0;">
+        {% csrf_token %}
+    </form>
+
+    <!-- 四個按鈕同列 -->
+    <div class="btn-group-custom">
+        <!-- 更新購物車按鈕，按下觸發 update-cart-form -->
+        <button type="submit" form="update-cart-form" class="btn btn-secondary flex-grow-1 flex-md-grow-0" style="min-width: 140px;">
+            ✅ 更新購物車
+        </button>
+
+        <!-- 清空購物車按鈕，按下觸發 clear-cart-form -->
+        <button type="submit" form="clear-cart-form" class="btn btn-danger flex-grow-1 flex-md-grow-0" style="min-width: 140px;">
+            🗑️ 清空購物車
+        </button>
+
+        <!-- 繼續購物 -->
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary flex-grow-1 flex-md-grow-0" style="min-width: 140px;">
+            🔙 繼續購物
+        </a>
+
+        <!-- 我要結帳 -->
+         <a href="#" onclick="startCheckout()" class="btn btn-success flex-grow-1 flex-md-grow-0" style="min-width: 140px;">
+            🧾 我要結帳
+        </a>
+    </div>
+
+    {% for product_id, item in cart_items.items %}
+    <form id="remove-form-{{ product_id }}" method="post" action="{% url 'remove_from_cart' product_id %}" style="display:none;">
+        {% csrf_token %}
+    </form>
+    {% endfor %}
+
+    {% else %}
+        <p class="text-danger fs-5 text-left">目前購物車是空的。</p>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script %}
+<script>
+function updateSubtotal(input) {
+    const price = parseFloat(input.dataset.price);
+    const quantity = parseInt(input.value);
+    const row = input.closest('tr');
+    const subtotalCell = row.querySelector('.subtotal-cell');
+
+    if (!isNaN(price) && !isNaN(quantity)) {
+        const subtotal = price * quantity;
+        subtotalCell.textContent = `$${subtotal.toFixed(0)}`;
+    }
+
+    updateTotal();
+}
+
+function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        const price = parseFloat(input.dataset.price);
+        const quantity = parseInt(input.value);
+        if (!isNaN(price) && !isNaN(quantity)) {
+            total += price * quantity;
+        }
+    });
+
+    const totalDisplay = document.getElementById('total-display');
+    if (totalDisplay) {
+        totalDisplay.textContent = `$${total.toFixed(0)}`;
+    }
+}
+
+function removeItem(productId) {
+    if(confirm('⚠️ 確定要移除這個商品嗎？')) {
+        const form = document.getElementById(`remove-form-${productId}`);
+        if(form) {
+            form.submit();
+        }
+    }
+}
+
+function startCheckout() {
+    document.getElementById('go-to-checkout').value = '1';
+    document.getElementById('update-cart-form').submit();
+}
+</script>
+{% endblock%}

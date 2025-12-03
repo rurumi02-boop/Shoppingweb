@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<title>新增商品</title>
+{% endblock %}
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+{% if success_message %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ success_message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% if error_message %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error_message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Dropdown button
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#">Action</a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li><a class="dropdown-item" href="#">Something else here</a></li>
+  </ul>
+</div>
+<form method="post" action="{% url 'submit_product_add' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3 row">
+        <label for="product_name" class="col-sm-2 col-form-label">產品名稱</label>
+        <div class="col-sm-10">
+            <input name="product_name" type="text" class="form-control" id="product_name">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="description" class="col-sm-2 col-form-label">描述</label>
+        <div class="col-sm-10">
+            <input name="description" type="text" class="form-control" id="description">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="price" class="col-sm-2 col-form-label">產品價格</label>
+        <div class="col-sm-10">
+            <input name="price" type="number" class="form-control" id="price">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="stock_quantity" class="col-sm-2 col-form-label">庫存</label>
+        <div class="col-sm-10">
+            <input name="stock_quantity" type="number" class="form-control" id="stock_quantity">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="image_url" class="col-sm-2 col-form-label">產品圖片</label>
+        <div class="col-sm-10">
+            <input name="image_url" class="form-control" type="file" id="image_url">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="is_active" class="col-sm-2 col-form-label">是否上架</label>
+        <div class="col-sm-10">
+            <input class="form-check-input" type="radio" name="is_active" id="is_active">
+            <label class="form-check-label" for="is_active">
+                上架
+            </label>
+            <input class="form-check-input" type="radio" name="is_active" id="is_not_active" checked>
+            <label class="form-check-label" for="is_not_active">
+                下架
+            </label>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="brand" class="col-sm-2 col-form-label">品牌</label>
+        <div class="col-sm-10">
+            <input name="brand" type="text" class="form-control" id="brand">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="category" class="col-sm-2 col-form-label">種類</label>
+        <div class="col-sm-10">
+            <select name="category" class="form-select" aria-label="Default select example">
+                {% for name, cat_id in categories %}
+                <option value="{{ cat_id }}" {% if forloop.first %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-success me-2">✅ 新增商品</button>
+    </div>
+</form>
+
+
+<div class="container mt-5">
+    {% for cat_id, products in category_products.items %}
+        <h4 class="mt-4">分類 {{ cat_id }}</h4>
+        <div class="row">
+            {% for product in products %}
+            <div class="card m-2" style="width: 18rem;">
+                <img src="{{ product.image_url|default:'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ product.product_name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product_name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text">價格：{{ product.price }}</p>
+                    <p class="card-text">庫存：{{ product.stock_quantity }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>此分類暫無商品。</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+db__old.sqlite3
+db_firebase_placeholder.sqlite3
+
+# Environment variables
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static files (if collected)
+/staticfiles/
+/media/
+
+# Firebase credentials (重要：不要提交敏感資訊)
+firebase-credentials.json
+*.json
+!package.json
+!package-lock.json
+
+# Migrations (可選，如果不想提交遷移文件)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# 包含 Token 的認證腳本（重要：不要提交）
+setup_token.bat
+push_with_token.bat
+push_with_token.ps1
+快速推送.bat
+推送專案.bat
+手動推送命令.txt
+立即推送指南.md
+
+serviceAccountKey.json
+__pycache__/
+*.pyc
+db.sqlite3
